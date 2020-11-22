@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Example</title>
+<title>Tulostaulu</title>
 <style>
 body { 
   display: grid;
@@ -41,7 +41,10 @@ header, footer, article, aside, div {
         </td>
         <td>
             <select>
-                <option>Valitse toiminto</option>
+                <option value="">Valitse toiminto</option>
+                {{#each toiminto}}
+                <option value="{{this.key}}">{{this.name}}</option>
+            {{/each}}
               </select>        
         </td>
       </tr> 
@@ -52,17 +55,16 @@ header, footer, article, aside, div {
   </article>
   <aside id="mainNav">
     <ul style="list-style: none;">
-        <li><a href="">Sarjataulukko</a></li>
-        <li><a href="">Pelaajat ja joukkueet</a></li>
+        <li><a href="" id="sarjataulukko">Sarjataulukko</a></li>
+        <li><a href="" id="pelaajatjajoukkueet">Pelaajat ja joukkueet</a></li>
     </ul>
   </aside>
   <div id="siteAds">
     <p>Seuraava tapahtumat</p>
     <ul style="list-style: none;">
-        <li>28.10.2018 Suomi-Unkari miesten maaottelu</li>
-        <li>01.11.2018 Futsal turnaus Kuopiossa</li>
-        <li>12.11.2018 Kauden päättäjäiset Keskuskentällä</li>
-        <li>28.11.2018 Pikkujoulut</li>
+      {{#each data }}
+      <li>{{this.type}} {{this.title}}</li>
+  {{/each}}
     </ul>
   </div>
   <footer id="pageFooter">
@@ -70,4 +72,5 @@ header, footer, article, aside, div {
         <p>Yhteystiedot</p>
     </div>
   </footer>
+  <script src="./script.js"></script>
 </body>

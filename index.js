@@ -1,98 +1,77 @@
-// npm install express
-// npm install handlebars
-// npm install consolidate
-
 var express = require('express');
 var cons = require('consolidate');
-var app = express();
 var path = require('path');
-var customerController = require('./customerController');
+var handlebars = require('handlebars');
+var customerController = require('./footballController');
 
-
-// Tulosta konsoliin mahdolliset enginet
-//console.log(cons);
+var app = express();
 
 app.engine('html', cons.handlebars); // Tällä otetaan käyttöön handlebars
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 
+handlebars.registerHelper('sijoitus', function (index) {
+    return index + 1;
+})
 
-var usersFromServer = [];
-usersFromServer.push({name: 'Matti'});
-usersFromServer.push({name: 'Ville'});
-usersFromServer.push({name: 'Pena'});
 
-var customersFromServer = [];
-customersFromServer.push({Nimi : "Testi", Osoite : "Testikuja 3", Postinro:"70700", Postitmp: "Kuopio", Tyyppi : 1});
+var toiminto = [];
+toiminto.push({key: 1 , name: 'toiminto 1'});
+toiminto.push({key: 2 , name: 'toiminto 2'});
+toiminto.push({key: 3 , name: 'toiminto 3'});
+toiminto.push({key: 4 , name: 'toiminto 4'});
+toiminto.push({key: 5 , name: 'toiminto 5'});
+
+var data = [];
+data.push({type : 1, title : 'data 1'});
+data.push({type : 2, title : 'data 2'});
+data.push({type : 3, title : 'data 3'});
+data.push({type : 4, title : 'data 4'});
 
 app.get('/', function(req, res) {
     res.render('index', {
-        title :"Hieno otsikko",
-        subtitle : "On tämäkin alaotsikko"
+        toiminto : toiminto,
+        data : data
     });
   });
 
-
-
-  app.get('/customers', function(req, res) {
-    customerController.fetchCustomersRevised().then(function(data){
-        console.log("Customers " + JSON.stringify(data));
-        return data;
-    }).then((customers) => {
-        return customers;
-    }).catch(function(msg){
-        console.log(msg);
-    }).then(function(customers){
-        res.render('customers', { // customers.html
-            customers: customers // Jälkimmäinen on nyt se nuolimuuttujan parametri
-        });        
-    }) 
-  });
-    
-app.get('/users', async function(req, res) {
-
-    var types = null;
-    try {
-        types = await customerController.fetchTypesRevised(); // asynkronisia pyyntöjä
-        console.log("tyypit haettu");
-    }
-    catch(error){
-        console.log("EI onnistunut");
-    }
-    if ( types == null ) types = [{ Avain:-1, Lyhenne: "KAIKKI", Selite: "Tyhyjä" }];
-        res.render('users', { // Haetaan näkymistä users.html, jonne renderöidään alla olevat tiedot:
-            title: 'Users',
-            subtitle: 'best',
-            users: usersFromServer, // syötetään sisään lista, joka määritettiin rivillä 20-23
-            languages: ['englanti', 'suomi', 'ruotsi'],
-            types : types
-        });       
-
-    /* Toinen tapa hoitaa sama asia: .then odottaa aina edellisen suorituksen
-    customerController.fetchTypesRevised().then(function(data){
-        console.log("types = " + JSON.stringify(data));
-        return data;    
-    })
-    .then((types) => {
-        return types;
-    })
-    .catch(function(msg){
-        console.log("Virhettä pukkaa " + msg);
-    })
-    .then((types) => {
-        // suoritetaan vaikka tulis virhe
-        if ( types == null ) types = [{ Avain:-1, Lyhenne: "KAIKKI", Selite: "Tyhyjä" }];
-        res.render('users', {
-            title: 'Users',
-            subtitle: 'best',
-            users: customerController.fetchUsers,
-            languages: ['englanti', 'suomi', 'ruotsi'],
-            types : types
-        });        
-    });
-    */
+// Haetaan sarjataulukko
+app.get('/sarjataulukko', function (req, res) {
+    footballController.haeSarjataulukko().
+        then(data => {
+            res.render('sarjataulukko', {
+                sarjataulukko: data
+            });
+        }).catch(err => {
+            console.log("Virhe: " + JSON.stringify(err));
+        });
 });
 
-app.listen(3003);
-console.log('Express server listening on port 3003');
+// Haetaan pelaajat ja joukkueet
+app.get('/pelaajatjajoukkueet', function (req, res) {
+    var pelaajat = footballController.haePelaajat();
+    var joukkueet = footballController.haeJoukkueet();
+
+    Promise.all([pelaajat, joukkueet]).
+        then(data => {
+            console.log('pelaajat = ' + JSON.stringify(data[0]));
+            console.log('joukkueet = ' + JSON.stringify(data[1]));
+
+            res.render('pelaajatjajoukkueet', {
+                pelaajat: data[0],
+                joukkueet: data[1]
+            });
+        }).catch(err => {
+            console.log("Virhe: " + JSON.stringify(err));
+        });
+});
+    
+// Virheilmoitus
+app.use(function (req, res, next) {
+    res.sendStatus(404);
+});
+
+// Kuunnellaan
+app.listen(3000);
+console.log("Server running at http://127.0.0.1:3000/");
 
