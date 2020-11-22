@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Pelaajat</h2>
+<ul>
+    {{#each pelaajat }}
+        <li>#{{this.Pelinumero}}  {{this.Sukunimi}} {{this.Etunimi}} {{this.Joukkue}}</li>
+    {{/each}}
+</ul>
+
+<h2>Joukkueet</h2>
+<ol>
+    {{#each joukkueet }}
+        <li>{{this.Nimi}}  {{this.Kaupunki}}  ({{this.Perustamisvuosi}})</li>
+    {{/each}}
+</ol>
+</body>
+</html>

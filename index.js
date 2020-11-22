@@ -2,7 +2,7 @@ var express = require('express');
 var cons = require('consolidate');
 var path = require('path');
 var handlebars = require('handlebars');
-var customerController = require('./footballController');
+var footballController = require('./footballController');
 
 var app = express();
 
@@ -13,6 +13,17 @@ app.set('views', path.join(__dirname, 'views'));
 handlebars.registerHelper('sijoitus', function (index) {
     return index + 1;
 })
+
+//CORS middleware
+var allowCrossDomain = function (req, res, next) {
+    // Jos haluttaisiin rajata hakuja joidenkin ehtojen perusteella, niin määritettäisiin näin:
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+  };
+  // Otetaan käyttöön CORS säännöt:
+  app.use(allowCrossDomain);
 
 
 var toiminto = [];
@@ -29,8 +40,8 @@ data.push({type : 3, title : 'data 3'});
 data.push({type : 4, title : 'data 4'});
 
 app.get('/', function(req, res) {
-    res.render('index', {
-        toiminto : toiminto,
+    res.render('football', {
+        toiminto: toiminto,
         data : data
     });
   });

@@ -2,7 +2,7 @@
 
 var mysql = require('mysql');
 
-var connection = mysql.createConnection({
+var con = mysql.createConnection({
   host : 'localhost',         // tietokantapalvelimen osoite
   user : 'root',              // kehitysatarkoituksessa voidaan käyttää root-käyttäjää. Tuotannossa ei saa käyttää root-käyttäjää
   password : 'Jalkapallo20',  // voi olla tyhjäkin, käyttäkää sitä mikä teillä on
@@ -17,7 +17,7 @@ function sleep(ms) {
 module.exports = {
   haeSarjataulukko: function () {
     return new Promise((resolve, reject) => {
-        con.query('SELECT * FROM sarjataulukko', function (err, result, fields) {
+        con.query('SELECT sarjataulukko.Id, Nimi, Ottelumaara, Voittoja, Tasapeleja, Tappioita, Tehdyt_maalit, Paastetyt_maalit, Pisteet FROM sarjataulukko LEFT JOIN joukkue ON sarjataulukko.Joukkue_id = Joukkue.id ORDER BY Pisteet DESC', function (err, result, fields) {
             if (err) {
                 console.log("Virhe haettaessa dataa Sarjataulukko-taulusta, syy: " + err);
                 reject("Virhe haettaessa dataa Sarjataulukko-taulusta, syy: " + err);
@@ -31,7 +31,7 @@ module.exports = {
 
   haePelaajat: function () {
     return new Promise((resolve, reject) => {
-        con.query('SELECT * FROM pelaaja', function (err, result, fields) {
+        con.query('SELECT pelaaja.Id, Sukunimi, Etunimi, Pelinumero, Nimi AS Joukkue FROM pelaaja LEFT JOIN joukkue ON pelaaja.Joukkue_id = Joukkue.id ORDER BY Sukunimi ASC', function (err, result, fields) {
             if (err) {
                 console.log("Virhe haettaessa dataa Pelaaja-taulusta, syy: " + err);
                 reject("Virhe haettaessa dataa Pelaaja-taulusta, syy: " + err);
