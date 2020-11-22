@@ -1,7 +1,7 @@
 {
   "name": "handlebar",
   "version": "1.0.0",
-  "description": "",
+  "description": "Savonian Web-ohjelmoinnin jatkokurssin toinen projekti.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,5 +15,13 @@
     "express-handlebars": "^5.2.0",
     "handlebars": "^4.7.6",
     "mysql": "^2.16.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miqlund/Web2_Node_Football.git"
+  },
+  "bugs": {
+    "url": "https://github.com/miqlund/Web2_Node_Football/issues"
+  },
+  "homepage": "https://github.com/miqlund/Web2_Node_Football#readme"
 }
